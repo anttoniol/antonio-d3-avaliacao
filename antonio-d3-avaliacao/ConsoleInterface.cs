@@ -5,7 +5,7 @@ public class ConsoleInterface
 {
     static void Main()
     {
-        AccessControl ac = new AccessControl();
+        Application.Application ac = new Application.Application();
         ac.start();
     }
 }

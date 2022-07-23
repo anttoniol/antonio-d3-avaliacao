@@ -79,7 +79,7 @@ namespace Application
         }
     }
 
-    public class AccessControl
+    public class Application
     {
         private String[] commands = {"acessar", "cancelar"};
         private String[] malicious =
