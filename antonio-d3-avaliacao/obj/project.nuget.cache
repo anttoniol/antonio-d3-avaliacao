@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "v7rEtD+6yTRngwxL1KI1UPB9PZLvmEeZr45HwkjiqFRoEwLCL7nljnm9CI0m/hsEZStz8igGKuP4IFaLkstELQ==",
+  "dgSpecHash": "ArZBmxislgIDryQSdM1XsCg451KAfuqz/Ws6PcjdSMptd5vuGZnk8vl1kcOuQxUx+y85phQylWtlIAxqQ6NBTA==",
   "success": true,
   "projectFilePath": "C:\\Users\\antto\\source\\repos\\antonio-d3-avaliacao\\antonio-d3-avaliacao\\antonio-d3-avaliacao.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\antto\\.nuget\\packages\\bcrypt.net-next\\3.3.3\\bcrypt.net-next.3.3.3.nupkg.sha512",
     "C:\\Users\\antto\\.nuget\\packages\\bouncycastle.netcore\\1.8.5\\bouncycastle.netcore.1.8.5.nupkg.sha512",
     "C:\\Users\\antto\\.nuget\\packages\\google.protobuf\\3.14.0\\google.protobuf.3.14.0.nupkg.sha512",
     "C:\\Users\\antto\\.nuget\\packages\\k4os.compression.lz4\\1.2.6\\k4os.compression.lz4.1.2.6.nupkg.sha512",

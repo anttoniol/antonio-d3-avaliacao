@@ -2,8 +2,26 @@
 using Application;
 
 
-ConsoleInterface ci = new ConsoleInterface();
-ci.start();
+//CreateLogin();
+RunConsoleInterface();
+
+static void RunConsoleInterface()
+{
+    ConsoleInterface ci = new ConsoleInterface();
+    ci.start();
+}
+
+//Criar usuário no banco com senha criptografada
+static void CreateLogin()
+{
+    Application.AccessControl ac = new Application.AccessControl();
+    bool success = ac.createLogin();
+    if (success)
+        Console.WriteLine("\nConta criada com sucesso!\n");
+    else
+        Console.WriteLine("\nOcorreu um erro na criação da conta\n"); 
+}
+
 public class ConsoleInterface
 {
     private string[] commands = { "acessar", "cancelar" };

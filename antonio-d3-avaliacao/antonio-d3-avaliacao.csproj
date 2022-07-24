@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="3.3.3" />
     <PackageReference Include="MySql.Data" Version="8.0.28" />
   </ItemGroup>
 

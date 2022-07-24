@@ -1,5 +1,0 @@
-O usuário admin(1) acessou o sistema às 22:56:46  do dia 23-07-2022.
-O usuário admin(1) acessou o sistema às 23:00:00  do dia 23-07-2022.
-O usuário admin(1) acessou o sistema às 23:10:38  do dia 23-07-2022.
-O usuário admin(1) acessou o sistema às 23:11:45  do dia 23-07-2022.
-O usuário admin(1) deslogou-se do sistema às 23:11:50  do dia 23-07-2022.

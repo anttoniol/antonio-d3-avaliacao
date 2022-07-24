@@ -33,3 +33,4 @@ C:\Users\antto\source\repos\antonio-d3-avaliacao\antonio-d3-avaliacao\obj\Debug\
 C:\Users\antto\source\repos\antonio-d3-avaliacao\antonio-d3-avaliacao\obj\Debug\net6.0\antonio-d3-avaliacao.pdb
 C:\Users\antto\source\repos\antonio-d3-avaliacao\antonio-d3-avaliacao\obj\Debug\net6.0\antonio-d3-avaliacao.genruntimeconfig.cache
 C:\Users\antto\source\repos\antonio-d3-avaliacao\antonio-d3-avaliacao\obj\Debug\net6.0\ref\antonio-d3-avaliacao.dll
+C:\Users\antto\source\repos\antonio-d3-avaliacao\antonio-d3-avaliacao\bin\Debug\net6.0\BCrypt.Net-Next.dll

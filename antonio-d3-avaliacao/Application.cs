@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using MySql.Data.MySqlClient;
+using BCrypt.Net;
 
 namespace Application
 {
@@ -13,12 +14,12 @@ namespace Application
             connStr = "server=localhost;user id=root;password=root;database=antonio_d3_avaliacao";
         }
 
-        internal DataTable SelectLogin(string email, string password)
+        internal string[] Select(string email, string password)
         {
             try
             {
-                string query = "SELECT id, nome FROM login WHERE email = @email AND senha = @password;";
-                
+                string query = "SELECT id, nome, senha FROM login WHERE email = @email;";
+
                 MySqlConnection connection = new MySqlConnection(connStr);
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@email", email);
@@ -36,14 +37,40 @@ namespace Application
                 if (dataTable.Rows.Count == 0)
                     return null;
 
-                return dataTable;
+                bool match = BCrypt.Net.BCrypt.Verify(password, dataTable.Rows[0]["senha"].ToString());
+                if (match)
+                    return new string[] {dataTable.Rows[0]["nome"].ToString(), dataTable.Rows[0]["id"].ToString()};
+                return null;
             }
             catch
             {
                 Console.WriteLine("\nHouve um erro na conexão com o banco de dados\n");
+                return null;
             }
+        }
 
-            return null;
+        internal bool Insert(string name, string email, string password)
+        {
+            try
+            {
+                string query = "INSERT INTO login(nome, email, senha) VALUES(@name, @email, @password);";
+
+                MySqlConnection connection = new MySqlConnection(connStr);
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@password", password);
+                connection.Open();
+                command.ExecuteReader();
+                connection.Close();
+
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine("\nHouve um erro na conexão com o banco de dados\n");
+                return false;
+            }   
         }
     }
 
@@ -124,12 +151,25 @@ namespace Application
             }
         }
 
+        public bool createLogin()
+        {
+            string name, email, password;
+
+            Console.WriteLine("Informe o nome: ");
+            name = validate(Console.ReadLine());
+            Console.WriteLine("\nInforme o email: ");
+            email = validate(Console.ReadLine());
+            Console.WriteLine("\nInforme a senha: ");
+            password = BCrypt.Net.BCrypt.HashPassword(validate(Console.ReadLine()));
+
+            return new Conexao().Insert(name, email, password);
+        }
+
         public string start()
         {
             Console.WriteLine("\n-------------------------AUTENTICAÇÃO: INÍCIO---------------------------\n");
-            string email;
-            string password;
-            DataTable dataTable;
+            string email, password;
+            string[] data;
 
             do
             {
@@ -138,13 +178,13 @@ namespace Application
                 Console.WriteLine("\nInforme a senha: ");
                 password = validate(Console.ReadLine());
 
-                dataTable = new Conexao().SelectLogin(email, password);
-                if (dataTable == null)
+                data = new Conexao().Select(email, password);
+                if (data == null)
                     Console.WriteLine("\nDados inválidos, tente novamente\n");
-            } while (dataTable == null);
+            } while (data == null);
 
             Console.WriteLine("\nLogin realizado com sucesso!\n");
-            String msgLogin = $"O usuário {dataTable.Rows[0]["nome"].ToString()}({dataTable.Rows[0]["id"].ToString()}) " +
+            String msgLogin = $"O usuário {data[0]}({data[1]}) " +
                 $"acessou o sistema às {DateTime.Now.ToString("HH:mm:ss tt")} do dia {DateTime.Now.ToString("dd-MM-yyyy")}.";
             registerOnFile(msgLogin);
 
@@ -152,7 +192,7 @@ namespace Application
             string platformCommand = checkPlatformCommand(platform.start());
             if(platformCommand == "acessar")
             {
-                String msgLogout = $"O usuário {dataTable.Rows[0]["nome"].ToString()}({dataTable.Rows[0]["id"].ToString()}) " +
+                String msgLogout = $"O usuário {data[0]}({data[1]}) " +
                 $"deslogou-se do sistema às {DateTime.Now.ToString("HH:mm:ss tt")} do dia {DateTime.Now.ToString("dd-MM-yyyy")}.";
                 registerOnFile(msgLogout);
             }
