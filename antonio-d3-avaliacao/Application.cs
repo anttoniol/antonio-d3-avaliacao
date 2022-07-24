@@ -6,18 +6,18 @@ namespace Application
 {
     internal class Conexao
     {
-        private String connStr;
+        private string connStr;
 
         internal Conexao()
         {
             connStr = "server=localhost;user id=root;password=root;database=antonio_d3_avaliacao";
         }
 
-        internal int SelectLogin(String email, String password)
+        internal DataTable SelectLogin(string email, string password)
         {
             try
             {
-                String query = "SELECT id FROM login WHERE email = @email AND senha = @password;";
+                string query = "SELECT id, nome FROM login WHERE email = @email AND senha = @password;";
                 
                 MySqlConnection connection = new MySqlConnection(connStr);
                 MySqlCommand command = new MySqlCommand(query, connection);
@@ -31,29 +31,27 @@ namespace Application
                 DataTable dataTable = new DataTable();
                 dataTable.Load(dataReader);
 
-                if (dataTable.Rows.Count == 0)
-                    return -1;
-
-                bool converted = int.TryParse(dataTable.Rows[0]["id"].ToString(), out int id);
                 connection.Close();
 
-                if (converted)
-                    return id;
+                if (dataTable.Rows.Count == 0)
+                    return null;
+
+                return dataTable;
             }
             catch
             {
                 Console.WriteLine("\nHouve um erro na conexão com o banco de dados\n");
             }
 
-            return -1;
+            return null;
         }
     }
 
     internal class Platform
     {
-        private String[] commands = {"deslogar", "encerrar sistema"};
+        private string[] commands = {"deslogar", "encerrar sistema"};
 
-        private String CheckCommand(String command)
+        private string CheckCommand(string command)
         {
             if (!commands.Contains(command))
                 return "";
@@ -61,43 +59,57 @@ namespace Application
             return command;
         }
 
-        private String returnCommands()
+        private string returnCommands()
         {
-            return String.Join("/", commands);
+            return string.Join("/", commands);
         }
 
-        internal String start()
+        internal string start()
         {
             Console.WriteLine("-------------------------PLATAFORMA: INÍCIO-----------------------------\n");
-            String action = "";
-            while (String.IsNullOrEmpty(action))
+            String command;
+            do
             {
                 Console.WriteLine($"Informe um comando [{returnCommands()}]: ");
-                action = CheckCommand(Console.ReadLine());
-                if (String.IsNullOrEmpty(action))
+                command = CheckCommand(Console.ReadLine());
+                if (string.IsNullOrEmpty(command))
                     Console.WriteLine("\nComando inválido\n");
-            }
+            } while (string.IsNullOrEmpty(command));
+            
             Console.WriteLine("--------------------------PLATAFORMA: FIM-------------------------------\n");
-            return action;
+            return command;
         }
     }
 
     public class AccessControl
     {
-        private String[] malicious =
+        private string[] malicious =
         {
             "drop", "delete", "select", ";", "--", "insert", "delete", "xp_", "'", "update", "/*", "*/"
         };
 
-        private String validate(String data)
+        private void registerOnFile(string message)
         {
-            String secureData = data;
-            foreach(String bad in malicious) 
+            string fileName = "log.txt";
+            string temp = AppDomain.CurrentDomain.BaseDirectory;
+            string path = Path.Combine(temp, fileName);
+
+            bool fileExist = File.Exists(path);
+            if (!fileExist)
+                File.Create(path);
+
+            File.AppendAllText(path, message + Environment.NewLine);
+        }
+
+        private string validate(string data)
+        {
+            string secureData = data;
+            foreach(string bad in malicious) 
                 secureData = secureData.Replace(bad, "", true, null);
             return secureData;
         }
 
-        private String checkPlatformCommand(String command)
+        private string checkPlatformCommand(string command)
         {
             switch(command)
             {
@@ -112,27 +124,38 @@ namespace Application
             }
         }
 
-        public String start()
+        public string start()
         {
             Console.WriteLine("\n-------------------------AUTENTICAÇÃO: INÍCIO---------------------------\n");
-            int id = -1;
-            String email;
-            String password;
-            while (id < 0)
+            string email;
+            string password;
+            DataTable dataTable;
+
+            do
             {
                 Console.WriteLine("Informe o email: ");
                 email = validate(Console.ReadLine());
                 Console.WriteLine("\nInforme a senha: ");
                 password = validate(Console.ReadLine());
 
-                id = new Conexao().SelectLogin(email, password);
-                if (id < 0)
+                dataTable = new Conexao().SelectLogin(email, password);
+                if (dataTable == null)
                     Console.WriteLine("\nDados inválidos, tente novamente\n");
-            }
+            } while (dataTable == null);
+
             Console.WriteLine("\nLogin realizado com sucesso!\n");
+            String msgLogin = $"O usuário {dataTable.Rows[0]["nome"].ToString()}({dataTable.Rows[0]["id"].ToString()}) " +
+                $"acessou o sistema às {DateTime.Now.ToString("HH:mm:ss tt")} do dia {DateTime.Now.ToString("dd-MM-yyyy")}.";
+            registerOnFile(msgLogin);
 
             Platform platform = new Platform();
-            String platformCommand = checkPlatformCommand(platform.start());
+            string platformCommand = checkPlatformCommand(platform.start());
+            if(platformCommand == "acessar")
+            {
+                String msgLogout = $"O usuário {dataTable.Rows[0]["nome"].ToString()}({dataTable.Rows[0]["id"].ToString()}) " +
+                $"deslogou-se do sistema às {DateTime.Now.ToString("HH:mm:ss tt")} do dia {DateTime.Now.ToString("dd-MM-yyyy")}.";
+                registerOnFile(msgLogout);
+            }
             Console.WriteLine("--------------------------AUTENTICAÇÃO: FIM-----------------------------\n");
             return platformCommand;
         }

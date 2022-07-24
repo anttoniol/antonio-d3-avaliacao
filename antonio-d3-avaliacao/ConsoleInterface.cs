@@ -6,13 +6,13 @@ ConsoleInterface ci = new ConsoleInterface();
 ci.start();
 public class ConsoleInterface
 {
-    private String[] commands = { "acessar", "cancelar" };
+    private string[] commands = { "acessar", "cancelar" };
 
-    private String returnCommands()
+    private string returnCommands()
     {
-        return String.Join("/", commands);
+        return string.Join("/", commands);
     }
-    private String CheckCommand(String command)
+    private string CheckCommand(string command)
     {
         if (!commands.Contains(command))
             return "";
@@ -34,17 +34,15 @@ public class ConsoleInterface
     public void start()
     {
         Console.WriteLine("--------------------------INTERFACE: INÍCIO-----------------------------\n");
-        String command = "acessar";
-        while (command == "acessar")
+        string command;
+        do
         {
             Console.WriteLine($"Informe um comando [{returnCommands()}]: ");
             command = CheckCommand(Console.ReadLine());
-            if (String.IsNullOrEmpty(command))
-            {
+            if (string.IsNullOrEmpty(command))
                 Console.WriteLine("\nComando inválido\n");
-                command = "acessar";
-            }
-        }
+        } while (command == "acessar" || string.IsNullOrEmpty(command));
+       
         Console.WriteLine("---------------------------INTERFACE: FIM-------------------------------\n");
 
         return;
